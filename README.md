@@ -1,69 +1,20 @@
----
-title: "My Project"
-author: "Zhenjiang Li"
-date: "`r format(Sys.Date(),'%Y-%m-%d')`"
-output: html_document
----
-```{r, libraries-functions,echo = FALSE,message = FALSE,warning = FALSE}
-library(tidycensus)
-library(dplyr)
-library(kableExtra)
-good_round <- function(x, digits = 2, pval = FALSE){
-    # just use round otherwise
-    stopifnot(digits > 1)
-    stopifnot(length(digits) == 1)
-    if(pval){
-        stopifnot(x >= 0 & x <= 1)
-    }
-    tmp <- sprintf(paste0("%.", digits, "f"), x)
-    zero <- paste0("0.", paste0(rep("0", digits), collapse = ""))
-    tmp[tmp == paste0("-", zero)] <- zero
-    if(pval & tmp == zero){
-        tmp <- paste0("<0.", paste0(rep("0", digits - 1), collapse = ""), "1", 
-                      collapse = "")
-    }
-    return(tmp)
+# My project
+For my project, I will create descriptive analyses on some neighborhood-level socioeconomic status factors for Georgia counties from 2010 to 2019. The source data are publicly available from the US Census Bureau's five-year American Community Survey (ACS).
+## Package Preperation
+To get access to the ACS data and initiate the analysis, you will need to install three `R` packages including `tidycensus`, `dplyr`, and `kableExtra`. The following commands can be used to install them:
+```
+installed_pkgs <- row.names(installed.packages())
+pkgs <- c("tidycensus", "dplyr","kableExtra")
+for(p in pkgs){
+  if(!(p %in% install_pkgs)){
+    install.packages(p)
+  }
 }
 ```
-I created descriptive analyses on some neighborhood-level socioeconomic status factors for GA counties from 2010 to 2019. The source data are publicly available from the US Census Bureau's five-year American Community Survey (ACS).
+## Execute the Analysis
+To execute the analysis, from this project folder you can run:
+```
+Rscript -e "rmarkdown::render('report.Rmd')"
+```
+The `R` markdown file will generate a `.html` document named `My Project` in your directory that contains the result of descriptive analysis.
 
-## Download the US Census Bureau data
-I downloaded ACS data by an R package named _tidycensus_. Three factors at county level were included: percent of population in poverty, percent of households with annual income less than $35,000, and percent of households without vehicles. 
-```{r,load-online-data,echo = FALSE,message=FALSE}
-poverty_domain_list <- c("B17001_001","B17001_002","B19001_001","B19001_002","B19001_003","B19001_004","B19001_005","B19001_006","B19001_007","B08141_001","B08141_002")
-year <- c(2010:2019)
-poverty_domain <- matrix(nrow = 0,ncol = 14,dimnames = list(NULL,c("GEOID","NAME",poverty_domain_list,"year")))
-for(i in 1:length(year)){
-  temp <- get_acs(geography = "county",
-                  variables = poverty_domain_list,
-                  year = year[i],
-                  survey = "acs5",
-                  state = 13,
-                  output = "wide")
-  temp$year <- year[i]
-  poverty_domain <- rbind(poverty_domain,temp)
-  rm(temp)
-}
-poverty_domain <- poverty_domain[,-grep('\\M$',colnames(poverty_domain))]
-poverty_domain$in_poverty <- poverty_domain$B17001_002E/poverty_domain$B17001_001E * 100
-poverty_domain$income_less_35000 <- apply(poverty_domain[,c("B19001_002E","B19001_003E","B19001_004E","B19001_005E","B19001_006E","B19001_007E")],1,sum)/poverty_domain$B19001_001E * 100
-poverty_domain$no_car <- poverty_domain$B08141_002E/poverty_domain$B08141_001E * 100
-poverty_domain <- poverty_domain[,c("GEOID","NAME","year","in_poverty","income_less_35000","no_car")]
-```
-```{r,get-a-look-at-data-in-dataframe,echo = FALSE}
-knitr::kable(poverty_domain[1:5,],col.names = c("GEOID","County name","Year","Pop. in poverty (%)","Household income less than 35000 (%)","No cars (%)"),
-             "html")
-```
-## Descriptive analysis
-I calculated the median of each factor for the `r dim(poverty_domain)[1]` counties in GA. In general, the percent of populations in poverty according to the federal standard has fluctuated around 22% in the past decade. The percent of households with the annual income less than $35,000 decreased about 7% FROM 2010. The percent of households that did not own a vehicle remained stable at around 2.5%.
-```{r,table,echo=FALSE,message=FALSE,warning=FALSE}
-poverty_domain$in_poverty <- sapply(poverty_domain$in_poverty,good_round)
-poverty_domain$income_less_35000 <- sapply(poverty_domain$income_less_35000,good_round)
-poverty_domain$no_car <- sapply(poverty_domain$no_car,good_round)
-tmp <- knitr::kable(poverty_domain %>%
-               dplyr::group_by(year) %>%
-               dplyr::summarise(in_poverty_median = median(in_poverty,na.rm = T),income_less_35000_median = median(income_less_35000,na.rm = T),no_car_median = median(no_car,na.rm = T)),
-             col.names = c("Year","Pop. in poverty (%)","Household income less than 35000 (%)","No cars (%)"))
-add_header_above(tmp,c(" ","County median" = 3)) %>%
-  kable_styling()
-```   
