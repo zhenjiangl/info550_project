@@ -2,7 +2,8 @@
 title: "My Project"
 author: "Zhenjiang Li"
 date: "`r format(Sys.Date(),'%Y-%m-%d')`"
-output: html_document
+output: html_document:
+  fig_caption: yes
 ---
 ```{r, libraries-functions,echo = FALSE,message = FALSE,warning = FALSE}
 library(tidycensus)
@@ -68,4 +69,9 @@ tmp <- knitr::kable(poverty_domain %>%
              col.names = c("Year","Pop. in poverty (%)","Household income less than 35000 (%)","No cars (%)"))
 add_header_above(tmp,c(" ","County median" = 3)) %>%
   kable_styling()
+```
+## Figure
+The changes of the three factors over time from 2010 to 2019 in DeKalb County, GA were visualized as a time-series figure. 
+```{r figs, echo = FALSE, fig.cap = "\\label{fig:fits}Time series from 2010 to 2019 for DeKalb County, GA"}
+knitr::include_graphics("C/Users/zli387/Downloads/HW3_git/figs/time_series_plot_DeKalb.png")
 ```   
