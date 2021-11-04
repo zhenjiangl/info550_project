@@ -38,7 +38,7 @@ I created descriptive analyses on some neighborhood-level socioeconomic status f
 ## Download the US Census Bureau data
 I downloaded ACS data by an R package named _tidycensus_. Three factors at county level were included: percent of population in poverty, percent of households with annual income less than $35,000, and percent of households without vehicles. 
 ```{r,load-online-data,echo = FALSE,message=FALSE}
-census_api_key("9664bc70fc2e3c3b84e6cff9cb6f37f13691738d",install = T,overwrite = T) #apply my API key
+census_api_key("9664bc70fc2e3c3b84e6cff9cb6f37f13691738d",install = F,overwrite = F) #apply my API key
 
 poverty_domain_list <- c("B17001_001","B17001_002","B19001_001","B19001_002","B19001_003","B19001_004","B19001_005","B19001_006","B19001_007","B08141_001","B08141_002")
 year <- c(2010:2019)

@@ -2,7 +2,7 @@ here::i_am("R/time_series_DeKalb.R")
 
 library(ggplot2)
 library(tidyr)
-data <- read.csv("C:/Users/zli387/Downloads/HW3_git/data/info550_project_data.csv")
+data <- read.csv(here::here("data","info550_project_data.csv"))
 data$year <- as.Date(paste(data$year,1,1,sep = "-"))
 data <- data %>%
   pivot_longer(
