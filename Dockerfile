@@ -19,8 +19,5 @@ COPY ./ /project/
 RUN chmod +x /project/R/*.R
 RUN chmod +x /project/Rmd/*.Rmd
 
-# set an environment variable
-ENV which_fig="gears_vs_cylinders"
-
 # make container entry point bash
 CMD /bin/bash
