@@ -20,4 +20,4 @@ RUN chmod +x /project/R/*.R
 RUN chmod +x /project/Rmd/*.Rmd
 
 # make container entry point bash
-CMD /bin/bash
+CMD make
