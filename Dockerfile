@@ -13,11 +13,12 @@ RUN mkdir /project
 COPY ./ /project/
 
 # use renv to restore package environment
-# RUN R -e "renv::restore()"
+WORKDIR /project
+RUN R -e "renv::restore()"
 
 # make R scripts executable
 RUN chmod +x /project/R/*.R
 RUN chmod +x /project/Rmd/*.Rmd
 
 # make container entry point bash
-CMD make
+CMD make output/report.html
