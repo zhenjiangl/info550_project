@@ -1,4 +1,4 @@
-FROM r-base
+FROM rocker/r-base
 
 # get dependent libraries on Docker image
 RUN apt-get update -t unstable \
